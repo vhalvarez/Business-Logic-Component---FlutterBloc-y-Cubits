@@ -17,22 +17,35 @@ class CubitCounterScreen extends StatelessWidget {
 class _CubitCounterView extends StatelessWidget {
   const _CubitCounterView();
 
+  void increaseCounterBy(BuildContext context, int value) {
+    // Access the CounterCubit instance and call increaseBy
+    context.read<CounterCubit>().increaseBy(value);
+  }
+
+  void resetCounter(BuildContext context) {
+    // Access the CounterCubit instance and call reset
+    context.read<CounterCubit>().reset();
+  }
+
   @override
   Widget build(BuildContext context) {
-
     // Access the CounterCubit instance
-    final counterState = context.watch<CounterCubit>().state;
-
+    // final counterState = context.watch<CounterCubit>().state;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cubit Counter: ${counterState.transactionCount}'),
+        // title: Text('Cubit Counter: ${counterState.transactionCount}'),
         actions: [
-          IconButton(onPressed: () => {}, icon: Icon(Icons.refresh_rounded)),
+          IconButton(
+            onPressed: () => {resetCounter(context)},
+            icon: Icon(Icons.refresh_rounded),
+          ),
         ],
       ),
       body: Center(
         child: BlocBuilder<CounterCubit, CounterState>(
+        //   buildWhen: (previous, current) => current.counter != previous.counter,
+          // Only rebuild when the counter value changes
           builder: (context, state) {
             return Text('Counter value: ${state.counter}');
           },
@@ -45,6 +58,7 @@ class _CubitCounterView extends StatelessWidget {
             heroTag: '1',
             onPressed: () {
               // Increment counter logic
+              increaseCounterBy(context, 3);
             },
             child: const Text('+3'),
           ),
@@ -52,6 +66,7 @@ class _CubitCounterView extends StatelessWidget {
           FloatingActionButton(
             onPressed: () {
               // Decrement counter logic
+              increaseCounterBy(context, 2);
             },
             heroTag: '2',
             child: const Text('+2'),
@@ -60,6 +75,7 @@ class _CubitCounterView extends StatelessWidget {
           FloatingActionButton(
             onPressed: () {
               // Decrement counter logic
+              increaseCounterBy(context, 1);
             },
             heroTag: '3',
             child: const Text('+1'),
