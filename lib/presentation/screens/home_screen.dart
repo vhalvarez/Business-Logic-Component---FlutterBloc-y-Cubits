@@ -28,6 +28,12 @@ class HomeScreen extends StatelessWidget {
               thickness: 2,
             ),
           ),
+          ListTile(
+            title: Text('Nuevo usuario'),
+            subtitle: Text('Manejo de formularios'),
+            trailing: const Icon(Icons.arrow_forward_ios_rounded),
+            onTap: () => context.push('/new-user'),
+          ),
         ],
       ),
     );
