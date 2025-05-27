@@ -21,6 +21,13 @@ class HomeScreen extends StatelessWidget {
             trailing: const Icon(Icons.arrow_forward_ios_rounded),
             onTap: () => context.push('/counter-block'),
           ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Divider(
+              color: Theme.of(context).colorScheme.primary,
+              thickness: 2,
+            ),
+          ),
         ],
       ),
     );
