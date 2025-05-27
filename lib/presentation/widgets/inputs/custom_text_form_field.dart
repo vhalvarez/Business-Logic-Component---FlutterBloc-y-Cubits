@@ -5,10 +5,10 @@ class CustomTextFormField extends StatelessWidget {
   final String? hintText;
   final String? errorMessage;
   final bool? obscureText;
-  Function(String)? onChanged;
+  final Function(String)? onChanged;
   final String? Function(String?)? validator;
 
-  CustomTextFormField({
+  const CustomTextFormField({
     this.label,
     this.hintText,
     this.errorMessage,
