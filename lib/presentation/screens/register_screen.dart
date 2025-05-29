@@ -44,47 +44,29 @@ class _RegisterView extends StatelessWidget {
   }
 }
 
-class _RegisterForm extends StatefulWidget {
+class _RegisterForm extends StatelessWidget {
   const _RegisterForm();
-
-  @override
-  State<_RegisterForm> createState() => _RegisterFormState();
-}
-
-class _RegisterFormState extends State<_RegisterForm> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     final registerCubit = context.watch<RegisterCubit>();
+    final username = registerCubit.state.username;
+    final password = registerCubit.state.password;
 
     return Form(
-      key: _formKey,
       child: Column(
         children: [
           const SizedBox(height: 10),
           CustomTextFormField(
             label: 'Nombre de usuario',
-            onChanged: (value) {
-              registerCubit.usernameChanged(value);
-              _formKey.currentState?.validate();
-            },
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'El nombre de usuario es obligatorio';
-              }
-              if (value.length < 3) {
-                return 'El nombre de usuario debe tener al menos 3 caracteres';
-              }
-              return null;
-            },
+            onChanged: registerCubit.usernameChanged,
+            errorMessage: username.errorMessage,
           ),
           const SizedBox(height: 10),
           CustomTextFormField(
             label: 'Correo electrónico',
             onChanged: (value) {
               registerCubit.emailChanged(value);
-              _formKey.currentState?.validate();
             },
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -100,28 +82,13 @@ class _RegisterFormState extends State<_RegisterForm> {
           CustomTextFormField(
             label: 'Contraseña',
             obscureText: true,
-            onChanged: (value) {
-              registerCubit.passwordChanged(value);
-              _formKey.currentState?.validate();
-            },
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'La contraseña es obligatoria';
-              }
-              if (value.length < 6) {
-                return 'La contraseña debe tener al menos 6 caracteres';
-              }
-              return null;
-            },
+            onChanged: registerCubit.passwordChanged,
+            errorMessage: password.errorMessage,
           ),
           const SizedBox(height: 10),
 
           FilledButton.tonalIcon(
             onPressed: () {
-              final isValid = _formKey.currentState!.validate();
-
-              if (!isValid) return;
-
               registerCubit.onSubmit();
             },
             icon: Icon(Icons.save),
