@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:forms_app/presentation/blocs/register/register_cubit.dart';
 import 'package:forms_app/presentation/widgets/widgets.dart';
 
 class RegisterScreen extends StatelessWidget {
@@ -8,7 +10,10 @@ class RegisterScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Nuevo usuario')),
-      body: _RegisterView(),
+      body: BlocProvider(
+        create: (context) => RegisterCubit(),
+        child: _RegisterView(),
+      ),
     );
   }
 }
@@ -30,7 +35,7 @@ class _RegisterView extends StatelessWidget {
 
               SizedBox(height: 20),
 
-              SizedBox(height: 20),
+              //   SizedBox(height: 20),
             ],
           ),
         ),
@@ -47,14 +52,12 @@ class _RegisterForm extends StatefulWidget {
 }
 
 class _RegisterFormState extends State<_RegisterForm> {
-
-    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-    String username = '';
-    String email = '';
-    String password = '';
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
+    final registerCubit = context.watch<RegisterCubit>();
+
     return Form(
       key: _formKey,
       child: Column(
@@ -62,51 +65,64 @@ class _RegisterFormState extends State<_RegisterForm> {
           const SizedBox(height: 10),
           CustomTextFormField(
             label: 'Nombre de usuario',
-            onChanged: (value) => username = value,
+            onChanged: (value) {
+              registerCubit.usernameChanged(value);
+              _formKey.currentState?.validate();
+            },
             validator: (value) {
-                if (value == null || value.isEmpty) {
-                    return 'El nombre de usuario es obligatorio';
-                }
-                if (value.length < 3) {
-                    return 'El nombre de usuario debe tener al menos 3 caracteres';
-                }
-                return null;
+              if (value == null || value.isEmpty) {
+                return 'El nombre de usuario es obligatorio';
+              }
+              if (value.length < 3) {
+                return 'El nombre de usuario debe tener al menos 3 caracteres';
+              }
+              return null;
             },
           ),
           const SizedBox(height: 10),
           CustomTextFormField(
             label: 'Correo electrónico',
-            onChanged: (value) => email = value,
+            onChanged: (value) {
+              registerCubit.emailChanged(value);
+              _formKey.currentState?.validate();
+            },
             validator: (value) {
-                if (value == null || value.isEmpty) {
-                    return 'El correo electrónico es obligatorio';
-                }
-                if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                    return 'El correo electrónico no es válido';
-                }
-                return null;
+              if (value == null || value.isEmpty) {
+                return 'El correo electrónico es obligatorio';
+              }
+              if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                return 'El correo electrónico no es válido';
+              }
+              return null;
             },
           ),
           const SizedBox(height: 10),
           CustomTextFormField(
             label: 'Contraseña',
             obscureText: true,
-            onChanged: (value) => password = value,
+            onChanged: (value) {
+              registerCubit.passwordChanged(value);
+              _formKey.currentState?.validate();
+            },
             validator: (value) {
-                if (value == null || value.isEmpty) {
-                    return 'La contraseña es obligatoria';
-                }
-                if (value.length < 6) {
-                    return 'La contraseña debe tener al menos 6 caracteres';
-                }
-                return null;
+              if (value == null || value.isEmpty) {
+                return 'La contraseña es obligatoria';
+              }
+              if (value.length < 6) {
+                return 'La contraseña debe tener al menos 6 caracteres';
+              }
+              return null;
             },
           ),
           const SizedBox(height: 10),
 
           FilledButton.tonalIcon(
             onPressed: () {
-                print('$username - $email - $password');
+              final isValid = _formKey.currentState!.validate();
+
+              if (!isValid) return;
+
+              registerCubit.onSubmit();
             },
             icon: Icon(Icons.save),
             label: Text('Crear usuario'),
